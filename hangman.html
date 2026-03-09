@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hangman Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        #hangman { font-size: 100px; }
+        #word { font-size: 24px; }
+        #message { font-size: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Hangman Game</h1>
+    <div id="hangman">🔪</div>
+    <div id="word">_ _ _ _ _</div>
+    <div>
+        <input type="text" id="guess" maxlength="1">
+        <button id="submit">Submit Guess</button>
+    </div>
+    <div id="message"></div>
+    <div id="hint">Hint: A common programming language</div>
+
+    <script>
+        const words = ['javascript', 'python', 'java', 'ruby', 'html'];
+        let selectedWord;
+        let guessedLetters;
+        let remainingGuesses;
+
+        function resetGame() {
+            selectedWord = words[Math.floor(Math.random() * words.length)];
+            guessedLetters = [];
+            remainingGuesses = 6;
+            document.getElementById('word').innerHTML = '_ '.repeat(selectedWord.length);
+            document.getElementById('message').innerHTML = '';
+            document.getElementById('hangman').innerHTML = '🔪';
+            document.getElementById('hint').innerHTML = 'Hint: A common programming language';
+        }
+
+        function updateWordDisplay() {
+            const wordDisplay = selectedWord.split('').map(letter => guessedLetters.includes(letter) ? letter : '_').join(' ');
+            document.getElementById('word').innerHTML = wordDisplay;
+        }
+
+        function checkGuess() {
+            const guess = document.getElementById('guess').value.toLowerCase();
+            if (!guessedLetters.includes(guess) && guess.length > 0) {
+                guessedLetters.push(guess);
+                if (!selectedWord.includes(guess)) {
+                    remainingGuesses--;
+                }
+                updateWordDisplay();
+                checkGameOver();
+                document.getElementById('guess').value = '';
+            } else {
+                document.getElementById('message').innerHTML = 'You already guessed that letter!';
+            }
+        }
+
+        function checkGameOver() {
+            if (remainingGuesses === 0) {
+                document.getElementById('message').innerHTML = 'Game over! The word was: ' + selectedWord;
+                document.getElementById('hangman').innerHTML = '💀';
+            } else if (!document.getElementById('word').innerHTML.includes('_')) {
+                document.getElementById('message').innerHTML = 'Congratulations! You guessed the word!';
+            }
+        }
+
+        document.getElementById('submit').addEventListener('click', checkGuess);
+        resetGame();
+    </script>
+</body>
+</html>
